@@ -19,7 +19,7 @@ typedef enum Server_Result_t {
 	SERVER_BIND_ERR,
 	SERVER_ACCEPT_ERR
 } ServerResult;
-
+/******************************************************************************/
 /*
  * Generic implementation of a server
  * */
@@ -33,8 +33,11 @@ private: //variables
 	int protocol;
 
 public:
-	Server(PortNumber_t port_num, int domain, int type, int protcol=0);
-	ServerResult connect_to_server();
+	Server(PortNumber_t port_num);
+	Server(PortNumber_t port_num, int max_blocking_size);
+	Server(PortNumber_t port_num, int max_blocking_size , int domain , int type , int protcol);
+
+	ServerResult recieve_request();
 
 };
 

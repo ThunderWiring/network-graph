@@ -1,0 +1,186 @@
+int main(int argc, char *argv[])
+{
+     int sockfd, newsockfd, portno;
+     socklen_t clilen;
+     char buffer[256];
+     struct sockaddr_in serv_addr, cli_addr;
+     int n;
+     if (argc < 2) {
+         fprintf(stderr,"ERROR, no port provided\n");
+         exit(1);
+     }
+     // create a socket
+     // socket(int domain, int type, int protocol)
+     sockfd =  socket(AF_INET, SOCK_STREAM, 0);
+     if (sockfd < 0) 
+        error("ERROR opening socket");
+
+     // clear address structure
+     bzero((char *) &serv;_addr, sizeof(serv_addr));
+
+     portno = atoi(argv[1]);
+
+     /* setup the host_addr structure for use in bind call */
+     // server byte order
+     serv_addr.sin_family = AF_INET;  
+
+     // automatically be filled with current host's IP address
+     serv_addr.sin_addr.s_addr = INADDR_ANY;  
+
+     // convert short integer value for port must be converted into network byte order
+     serv_addr.sin_port = htons(portno);
+
+     // bind(int fd, struct sockaddr *local_addr, socklen_t addr_length)
+     // bind() passes file descriptor, the address structure, 
+     // and the length of the address structure
+     // This bind() call will bind  the socket to the current IP address on port, portno
+     if (bind(sockfd, (struct sockaddr *) &serv;_addr,
+              sizeof(serv_addr)) < 0) 
+              error("ERROR on binding");
+
+     // This listen() call tells the socket to listen to the incoming connections.
+     // The listen() function places all incoming connection into a backlog queue
+     // until accept() call accepts the connection.
+     // Here, we set the maximum size for the backlog queue to 5.
+     listen(sockfd,5);
+
+     // The accept() call actually accepts an incoming connection
+     clilen = sizeof(cli_addr);
+
+     // This accept() function will write the connecting client's address info 
+     // into the the address structure and the size of that structure is clilen.
+     // The accept() returns a new socket file descriptor for the accepted connection.
+     // So, the original socket file descriptor can continue to be used 
+     // for accepting new connections while the new socker file descriptor is used for
+     // communicating with the connected client.
+     newsockfd = accept(sockfd, 
+                 (struct sockaddr *) &cli;_addr, &clilen;);
+     if (newsockfd < 0) 
+          error("ERROR on accept");
+
+     printf("server: got connection from %s port %d\n",
+            inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port));
+
+
+     // This send() function sends the 13 bytes of the string to the new socket
+     send(newsockfd, "Hello, world!\n", 13, 0);
+
+     bzero(buffer,256);
+
+     n = read(newsockfd,buffer,255);
+     if (n < 0) error("ERROR reading from socket");
+     printf("Here is the message: %s\n",buffer);
+
+     close(newsockfd);
+     close(sockfd);
+     return 0; 
+}
+
+----------------------------------------------------------------------
+
+/* Protocol families.  */
+#define PF_UNSPEC       0       /* Unspecified.  */
+#define PF_LOCAL        1       /* Local to host (pipes and file-domain).  */
+#define PF_UNIX         PF_LOCAL /* Old BSD name for PF_LOCAL.  */
+#define PF_FILE         PF_LOCAL /* Another non-standard name for PF_LOCAL.  */
+#define PF_INET         2       /* IP protocol family.  */
+#define PF_AX25         3       /* Amateur Radio AX.25.  */
+#define PF_IPX          4       /* Novell Internet Protocol.  */
+#define PF_APPLETALK    5       /* Appletalk DDP.  */
+#define PF_NETROM       6       /* Amateur radio NetROM.  */
+#define PF_BRIDGE       7       /* Multiprotocol bridge.  */
+#define PF_ATMPVC       8       /* ATM PVCs.  */
+#define PF_X25          9       /* Reserved for X.25 project.  */
+#define PF_INET6        10      /* IP version 6.  */
+#define PF_ROSE         11      /* Amateur Radio X.25 PLP.  */
+#define PF_DECnet       12      /* Reserved for DECnet project.  */
+#define PF_NETBEUI      13      /* Reserved for 802.2LLC project.  */
+#define PF_SECURITY     14      /* Security callback pseudo AF.  */
+#define PF_KEY          15      /* PF_KEY key management API.  */
+#define PF_NETLINK      16
+#define PF_ROUTE        PF_NETLINK /* Alias to emulate 4.4BSD.  */
+#define PF_PACKET       17      /* Packet family.  */
+#define PF_ASH          18      /* Ash.  */
+#define PF_ECONET       19      /* Acorn Econet.  */
+#define PF_ATMSVC       20      /* ATM SVCs.  */
+#define PF_SNA          22      /* Linux SNA Project */
+#define PF_IRDA         23      /* IRDA sockets.  */
+#define PF_PPPOX        24      /* PPPoX sockets.  */
+#define PF_WANPIPE      25      /* Wanpipe API sockets.  */
+
+----------------------------------------------------------------------
+/* Types of sockets.  */
+enum __socket_type
+{
+  SOCK_STREAM = 1,              /* Sequenced, reliable, connection-based
+                                   byte streams.  */
+#define SOCK_STREAM SOCK_STREAM
+  SOCK_DGRAM = 2,               /* Connectionless, unreliable datagrams
+                                   of fixed maximum length.  */
+#define SOCK_DGRAM SOCK_DGRAM
+  SOCK_RAW = 3,                 /* Raw protocol interface.  */
+#define SOCK_RAW SOCK_RAW
+  SOCK_RDM = 4,                 /* Reliably-delivered messages.  */
+#define SOCK_RDM SOCK_RDM
+  SOCK_SEQPACKET = 5,           /* Sequenced, reliable, connection-based,
+                                   datagrams of fixed maximum length.  */
+#define SOCK_SEQPACKET SOCK_SEQPACKET
+  SOCK_PACKET = 10              /* Linux specific way of getting packets
+                                   at the dev level.  For writing rarp and
+                                   other similar things on the user level. */
+#define SOCK_PACKET SOCK_PACKET
+};
+
+
+----------------------------------------------------------------------
+/* Address families.  */
+#define AF_UNSPEC       PF_UNSPEC
+#define AF_LOCAL        PF_LOCAL
+#define AF_UNIX         PF_UNIX
+#define AF_FILE         PF_FILE
+#define AF_INET         PF_INET
+#define AF_AX25         PF_AX25
+#define AF_IPX          PF_IPX
+#define AF_APPLETALK    PF_APPLETALK
+#define AF_NETROM       PF_NETROM
+#define AF_BRIDGE       PF_BRIDGE
+#define AF_ATMPVC       PF_ATMPVC
+#define AF_X25          PF_X25
+#define AF_INET6        PF_INET6
+#define AF_ROSE         PF_ROSE
+#define AF_DECnet       PF_DECnet
+#define AF_NETBEUI      PF_NETBEUI
+#define AF_SECURITY     PF_SECURITY
+#define AF_KEY          PF_KEY
+#define AF_NETLINK      PF_NETLINK
+#define AF_ROUTE        PF_ROUTE
+#define AF_PACKET       PF_PACKET
+#define AF_ASH          PF_ASH
+#define AF_ECONET       PF_ECONET
+#define AF_ATMSVC       PF_ATMSVC
+#define AF_SNA          PF_SNA
+#define AF_IRDA         PF_IRDA
+#define AF_PPPOX        PF_PPPOX
+#define AF_WANPIPE      PF_WANPIPE
+#define AF_BLUETOOTH    PF_BLUETOOTH
+#define AF_MAX          PF_MAX
+
+----------------------------------------------------------------------
+
+serv_addr.sin_family = AF_INET;
+serv_addr.sin_addr.s_addr = INADDR_ANY;
+serv_addr.sin_port = htons(portno);
+
+    sin_family = specifies the address family, usually the constant AF_INET
+    sin_addr = holds the IP address returned by inet_addr() to be used in the socket connection.
+    sin_port = specifies the port number and must be used with htons() function that converts the
+		 host byte order to network byte order so that it can be transmitted and routed properly
+		 when opening the socket connection. The reason for this is that computers and network protocols order their bytes in a non-compatible fashion.
+----------------------------------------------------------------------
+
+
+
+
+
+
+

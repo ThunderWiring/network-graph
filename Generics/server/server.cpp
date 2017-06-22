@@ -9,8 +9,34 @@
 
 typedef struct sockaddr_in SockAddr_in;
 
+Server::Server(PortNumber_t port_num, int max_blocking_size ,
+		int domain , int type , int protcol) {
+		this->port_number = port_num;
+		this->max_backlog_queue_size = max_blocking_size;
+		this->domain = domain;
+		this->type = type;
+		this->protocol = protcol;
+}
 
-ServerResult Server::connect_to_server() {
+Server::Server(PortNumber_t port_num, int max_blocking_size) {
+		this->port_number = port_num;
+		this->max_backlog_queue_size = max_blocking_size;
+		this->domain = AF_INET;
+		this->type = SOCK_STREAM;
+		this->protocol = 0;
+}
+
+
+Server::Server(PortNumber_t port_num) {
+		this->port_number = port_num;
+		this->max_backlog_queue_size = 1;
+		this->domain = AF_INET;
+		this->type = SOCK_STREAM;
+		this->protocol = 0;
+}
+//----------------------------------------------------------------------------
+
+ServerResult Server::recieve_request() {
 	int socket_fd = socket(domain, type, protocol);
 	CHECK_EXPR_AND_RETURN(socket_fd < 0, SERVER_SOCKET_ERR);
 
@@ -34,3 +60,5 @@ ServerResult Server::connect_to_server() {
 
 	return SERVER_NO_ERROR;
 }
+//----------------------------------------------------------------------------
+
