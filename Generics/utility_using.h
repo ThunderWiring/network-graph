@@ -1,9 +1,3 @@
-/*
- * utility_using.h
- *
- *  Created on: Jun 17, 2017
- *      Author: bassam
- */
 
 /***************************************************/
 /* No logic should be implemented in this file.    */
@@ -19,13 +13,19 @@
 #include <sys/socket.h>
 #include <string>
 #include <vector>
+#include <iostream>
 
 using std::vector;
 using std::string;
+using std::cout;
+using std::endl;
+
+typedef uint16_t PortNumber_t;
 
 #define CHECK_EXPR_AND_RETURN(expr, ret_val) \
 	if((expr)) return ret_val
 
-typedef uint16_t PortNumber_t;
+#define DEBUG__PRINT_MSG(msg) \
+	cout << (msg) << endl
 
 #endif /* GENERICS_UTILITY_USING_H_ */

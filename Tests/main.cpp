@@ -1,15 +1,9 @@
-/*
- * main.cpp
- *
- *  Created on: Jun 20, 2017
- *      Author: bassam
- */
 
 #include "test_interface.h"
 #include "../Generics/server/server.h"
 #include "../Generics/client/client.h"
 
-#define DEFAULT_TEXT_MSG "/_ --> this is a default test msg <-- _/"
+#define DEFAULT_TEXT_MSG ("/_ --> this is a default test msg <-- _/")
 
 /*
  * @Test: Client connects to port via a given port, and passes a given text to
@@ -28,10 +22,25 @@ public:
 			portno(port_num), text(DEFAULT_TEXT_MSG) {}
 
 	TestResult run() {
-		Server server = Server(portno);
-		Client client = Client(portno);
-		server.recieve_request();
-		client.connect_to_server("ubuntu"); //hostname = ubuntu
+		pid_t pid(-1);
+		if((pid = fork()) == 0) {
+			Server server = Server(portno);
+			server.recieve_request();
+			dbg_report("server is set");
+		} else if (pid > 0) {
+			Client client = Client(portno);
+			char* name = (char*) malloc(HOSTNAME_LEN * sizeof(char));
+			if(name == NULL) {
+				err_report("memory allocation for hostname failed.");
+				return FAIL;
+			}
+			get_hostname(name);
+			dbg_report("client is establishing connection ... ");
+			client.connect_to_server(name);
+			dbg_report("client is set");
+		} else {
+
+		}
 		return PASS;
 	}
 };

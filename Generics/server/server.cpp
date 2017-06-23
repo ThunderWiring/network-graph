@@ -1,10 +1,3 @@
-/*
- * server.cpp
- *
- *  Created on: Jun 19, 2017
- *      Author: bassam
- */
-
 #include "server.h"
 
 typedef struct sockaddr_in SockAddr_in;

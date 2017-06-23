@@ -55,5 +55,8 @@ ClientResult Client::connect_to_server(const char* hostname) {
 
 	int conn_res = connect(socket_fd, (struct sockaddr *) &server_addr, sizeof(server_addr));
 	CHECK_EXPR_AND_RETURN(conn_res < 0, CLIENT_CONNECT_ERR);
+
+	DEBUG__PRINT_MSG("client connected successfuly to server");
+
 	return CLIENT_NO_ERROR;
 }
