@@ -17,7 +17,7 @@ TARGET=search
 all: $(TARGET)
 
 search: $(OBJS)
-	$(CXX) $(CXXFLAGS) -o search $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
 server.o: $(SERVER_SRC)/server.cpp $(SERVER_SRC)/server.h $(UTILTOOLS_H)
 	$(CXX) $(CXXFLAGS) -c $(SERVER_SRC)/server.cpp
